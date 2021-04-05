@@ -16,9 +16,7 @@ bwi = imerode(bwi, str);
 [L N] = bwlabel(bwi);
 %L = area objek, N = banyaknya objek 
 prop = regionprops(L, 'all');
-
 for n=1:N
  rectangle('Position',prop(n).BoundingBox,'EdgeColor','g','LineWidth',2);
 end
-
 img = prop(max(n)).BoundingBox;
