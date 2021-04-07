@@ -22,7 +22,7 @@ function varargout = gui(varargin)
 
 % Edit the above text to modify the response to help gui
 
-% Last Modified by GUIDE v2.5 29-Mar-2021 15:07:44
+% Last Modified by GUIDE v2.5 06-Apr-2021 18:51:11
 
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
@@ -159,8 +159,6 @@ check = handles.data1;
 segmentasi;
 axes(handles.cek_objek);
 object = imcrop(check,img);
-%check piksel bounding box objek
-[row, col, ~] = size(object)
 imshow(object);
 title('Check Object');
 %menyimpan variabel pada lokasi handles
@@ -456,3 +454,5 @@ function psnr_CreateFcn(hObject, eventdata, handles)
 if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
     set(hObject,'BackgroundColor','white');
 end
+
+
