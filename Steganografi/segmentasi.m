@@ -19,7 +19,6 @@ prop = regionprops(L, 'all');
 for n=1:N   
  rectangle('Position',prop(n).BoundingBox,'EdgeColor','g','LineWidth',2);
 end
+row = prop(max(n)).BoundingBox(4) %banyaknya baris piksel
+col = prop(max(n)).BoundingBox(3) %banyaknya kolom piksel
 img = prop(max(n)).BoundingBox;
-row = prop(max(n)).BoundingBox(4)
-col = prop(max(n)).BoundingBox(3)
-area = prop(max(n)).Area;

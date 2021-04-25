@@ -186,13 +186,15 @@ function pushbutton_encode_Callback(hObject, eventdata, handles)
 % handles    structure with handles and user data (see GUIDATA)
 
 %mendeklarasikan variabel gambar object
-obj = handles.object;
+check = handles.object;
 %memanggil warna RGB dari gambar
-R = obj(:,:,1);
-G = obj(:,:,2);
-B = obj(:,:,3);
+R = check(:,:,1);
+G = check(:,:,2);
+B = check(:,:,3);
 %check piksel objek
-[row,col,~] = size(obj)
+%[row,col,~] = size(obj)
+segmentasi;
+object = imcrop(check,img);
 %cek karakter pesan yang akan diinputkan
 pesan = get(handles.edit1,'String');
 if isempty(pesan) % cek kondisi pesan di edit text
@@ -200,7 +202,7 @@ if isempty(pesan) % cek kondisi pesan di edit text
     return;
 end
 % penentuan maksimal karakter pesan dengan maksimal 1 penyisipan / piksel
-karakter_max = (row-1)*(col);
+karakter_max = (row)*(col);
 karakter_max = round((karakter_max*3)/8); % per channel warna
 % perhitungan panjang pesan di edit text
 panjang_pesan = length(pesan); % masih dalam hitungan desimal
@@ -221,7 +223,7 @@ handles.Img_steg = Img_steg;
 guidata(hObject, handles)
 %pemanggilang fungsi PSNR
 % pengujian steganografi pada citra menggunakan MSE dan PSNR
-coverimage = double(obj);
+coverimage = double(check);
 stegoimage = double(Img_steg);
 MSE = mse(coverimage,stegoimage);
 out=sprintf('MSE: %f\n',MSE);
