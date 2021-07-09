@@ -22,7 +22,7 @@ function varargout = gui(varargin)
 
 % Edit the above text to modify the response to help gui
 
-% Last Modified by GUIDE v2.5 06-Apr-2021 18:51:11
+% Last Modified by GUIDE v2.5 23-Jun-2021 03:38:00
 
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
@@ -60,7 +60,11 @@ axes(handles.cover_image)
 cla reset
 set(gca,'XTick',[])
 set(gca,'YTick',[]) 
-axes(handles.cek_objek)
+axes(handles.label_image)
+cla reset
+set(gca,'XTick',[])
+set(gca,'YTick',[])
+axes(handles.new_cover_image)
 cla reset
 set(gca,'XTick',[])
 set(gca,'YTick',[])
@@ -68,22 +72,21 @@ axes(handles.stego_image)
 cla reset
 set(gca,'XTick',[])
 set(gca,'YTick',[])
-set(handles.pushbutton_check_encode,'Enable','off')
+set(handles.pushbutton_complement,'Enable','off')
+set(handles.pushbutton_detect_normal,'Enable','off')
+set(handles.pushbutton_process,'Enable','off')
+set(handles.newcover,'Enable','off')
 set(handles.pushbutton_encode,'Enable','off')
-set(handles.pushbutton_save,'Enable','off')
-set(handles.edit1,'String',[])
+set(handles.save_encode,'Enable','off')
+set(handles.pesan_encode,'String',[])
+set(handles.nlabel,'String',[])
 %decoding
-axes(handles.cover_stego)
+axes(handles.image_stego)
 cla reset
 set(gca,'XTick',[])
 set(gca,'YTick',[])
-axes(handles.cek_stego)
-cla reset
-set(gca,'XTick',[])
-set(gca,'YTick',[])
-set(handles.pushbutton_check_decode,'Enable','off')
 set(handles.pushbutton_decode,'Enable','off')
-set(handles.edit2,'String',[])
+set(handles.pesan_decode,'String',[])
 
 % Update handles structure
 guidata(hObject, handles);
@@ -102,6 +105,15 @@ function varargout = gui_OutputFcn(hObject, eventdata, handles)
 
 % Get default command line output from handles structure
 varargout{1} = handles.output;
+
+
+% --- Executes on button press in togglebutton1.
+function togglebutton1_Callback(hObject, eventdata, handles)
+% hObject    handle to togglebutton1 (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+% Hint: get(hObject,'Value') returns toggle state of togglebutton1
 
 
 % --- Executes on button press in pushbutton_open_encode.
@@ -124,7 +136,11 @@ if ~isequal (namefile, 0)
     set(gca,'XTick',[])
     set(gca,'YTick',[])
     %
-    axes(handles.cek_objek)
+    axes(handles.label_image)
+    cla reset
+    set(gca,'XTick',[])
+    set(gca,'YTick',[])
+    axes(handles.new_cover_image)
     cla reset
     set(gca,'XTick',[])
     set(gca,'YTick',[])
@@ -132,7 +148,7 @@ if ~isequal (namefile, 0)
     cla reset
     set(gca,'XTick',[])
     set(gca,'YTick',[])
-    set(handles.edit1,'String',[])
+    set(handles.pesan_encode,'String',[])
     set(handles.psnr,'String',[])
     % membaca file citra cover image
     handles.data1 = imread(fullfile(namepath, namefile));
@@ -140,51 +156,194 @@ if ~isequal (namefile, 0)
     %
     axes(handles.cover_image);
     imshow(handles.data1);
-    title('Cover Image');  
+    title('Cover Image');
+    set(handles.pushbutton_complement,'Enable','on')
     %mengaktifkan tombol cek objek
-    set(handles.pushbutton_check_encode,'Enable','on')
+    set(handles.pushbutton_detect_normal,'Enable','on')
 else
     return;
 end
 
-% --- Executes on button press in pushbutton_check_encode.
-function pushbutton_check_encode_Callback(hObject, eventdata, handles)
-% hObject    handle to pushbutton_check_encode (see GCBO)
+% --- Executes on button press in pushbutton_complement.
+function pushbutton_complement_Callback(hObject, eventdata, handles)
+% hObject    handle to pushbutton_complement (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
-% processing size of image
+image = handles.data1;
+complement;
+axes(handles.label_image);
+imshow(bw);
+handles.data2 = bw;
+guidata(hObject,handles);
+%mengaktifkan tombol proses
+set(handles.pushbutton_process,'Enable','on')
 
-%deklarasi variabel data
-check = handles.data1;
-segmentasi;
-axes(handles.cek_objek);
-object = imcrop(check,img);
-imshow(object);
-title('Check Object');
-%menyimpan variabel pada lokasi handles
-handles.object = object;
-guidata(hObject, handles)
-%mengaktifkan tombol encode
-set(handles.pushbutton_encode,'Enable','on')
-% menampilkan menu save file
-[nama_file, nama_path] = uiputfile('Cover Image.bmp');
-% jika ada file yang dipilih maka akan mengeksekusi perintah di bawahnya
-if ~isequal(nama_file,0)
-    % menyimpan citra hasil steganografi
-    imwrite(object,fullfile(nama_path,nama_file))
-    msgbox('Picture has been saved!');
-else
-    % jika ada file yang dipilih maka akan kembali
-    return
+% --- Executes on slider movement.
+function slider_Callback(hObject, eventdata, handles)
+% hObject    handle to slider (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+% Hints: get(hObject,'Value') returns position of slider
+%        get(hObject,'Min') and get(hObject,'Max') to determine range of slider
+th = get(handles.slider, 'value');
+set(handles.th, 'string',th);
+
+% --- Executes during object creation, after setting all properties.
+function slider_CreateFcn(hObject, eventdata, handles)
+% hObject    handle to slider (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    empty - handles not created until after all CreateFcns called
+
+% Hint: slider controls usually have a light gray background.
+if isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
+    set(hObject,'BackgroundColor',[.9 .9 .9]);
 end
 
+
+
+function pesan_encode_Callback(hObject, eventdata, handles)
+% hObject    handle to pesan_encode (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+% Hints: get(hObject,'String') returns contents of pesan_encode as text
+%        str2double(get(hObject,'String')) returns contents of pesan_encode as a double
+
+
+% --- Executes during object creation, after setting all properties.
+function pesan_encode_CreateFcn(hObject, eventdata, handles)
+% hObject    handle to pesan_encode (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    empty - handles not created until after all CreateFcns called
+
+% Hint: edit controls usually have a white background on Windows.
+%       See ISPC and COMPUTER.
+if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
+    set(hObject,'BackgroundColor','white');
+end
+
+
+% --- Executes on button press in pushbutton_open_decode.
+function pushbutton_open_decode_Callback(hObject, eventdata, handles)
+% hObject    handle to pushbutton_open_decode (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+[namefile, namepath] = uigetfile(...
+    {'*.bmp; *.jpg; *.png;', 'FIle of type (*.bmp, *.jpg, *.png)';
+    '*.bmp', 'File Bitmap (*bmp)';...
+    '*.jpg', 'File JPEG (*jpg)';...
+    '*.png', 'File PNG (*png)';...
+    '*.*', 'All type(*.*)'
+    },...
+'Open Image');
+% jika ada file yang dipilih maka akan mengeksekusi perintah di bawahnya
+if ~isequal (namefile, 0)
+    axes(handles.image_stego)
+    cla reset
+    set(gca,'XTick',[])
+    set(gca,'YTick',[])
+    set(handles.pesan_decode,'String',[])
+    % membaca file citra cover stego
+    handles.data1 = imread(fullfile(namepath, namefile));
+    guidata (hObject, handles);
+    %
+    axes(handles.image_stego);
+    imshow(handles.data1);
+    title('Cover Stego');  
+    %mengaktifkan tombol cek objek
+    set(handles.pushbutton_decode,'Enable','on')
+else
+    return;
+end
+
+% --- Executes on button press in pushbutton_decode.
+function pushbutton_decode_Callback(hObject, eventdata, handles)
+% hObject    handle to pushbutton_decode (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+tStart = tic;
+%deklarasi variabel data
+Img_steg = handles.data1;
+%check luas piksel
+[row,col,~] = size(Img_steg)
+%memanggil warna RGB dari gambar
+R = Img_steg(:,:,1);
+G = Img_steg(:,:,2);
+B = Img_steg(:,:,3);
+%pemanggilan fungsi decode
+decode_pesan;
+
+
+function pesan_decode_Callback(hObject, eventdata, handles)
+% hObject    handle to pesan_decode (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+% Hints: get(hObject,'String') returns contents of pesan_decode as text
+%        str2double(get(hObject,'String')) returns contents of pesan_decode as a double
+
+
+% --- Executes during object creation, after setting all properties.
+function pesan_decode_CreateFcn(hObject, eventdata, handles)
+% hObject    handle to pesan_decode (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    empty - handles not created until after all CreateFcns called
+
+% Hint: edit controls usually have a white background on Windows.
+%       See ISPC and COMPUTER.
+if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
+    set(hObject,'BackgroundColor','white');
+end
+
+
+% --- Executes on button press in reset.
+function reset_Callback(hObject, eventdata, handles)
+% hObject    handle to reset (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+%pushbutton_encode
+axes(handles.cover_image)
+cla reset
+set(gca,'XTick',[])
+set(gca,'YTick',[]) 
+axes(handles.label_image)
+cla reset
+set(gca,'XTick',[])
+set(gca,'YTick',[])
+axes(handles.new_cover_image)
+cla reset
+set(gca,'XTick',[])
+set(gca,'YTick',[])
+axes(handles.stego_image)
+cla reset
+set(gca,'XTick',[])
+set(gca,'YTick',[])
+set(handles.pushbutton_complement,'Enable','off')
+set(handles.pushbutton_detect_normal,'Enable','off')
+set(handles.pushbutton_process,'Enable','off')
+set(handles.pushbutton_encode,'Enable','off')
+set(handles.newcover,'Enable','off')
+set(handles.save_encode,'Enable','off')
+set(handles.pesan_encode,'String',[])
+set(handles.psnr,'String',[])
+set(handles.th,'String',[])
+set(handles.nlabel,'String',[])
+%pushbutton_decode
+axes(handles.image_stego)
+cla reset
+set(gca,'XTick',[])
+set(gca,'YTick',[])
+%
+set(handles.pushbutton_decode,'Enable','off')
+set(handles.pesan_decode,'String',[])
 
 % --- Executes on button press in pushbutton_encode.
 function pushbutton_encode_Callback(hObject, eventdata, handles)
 % hObject    handle to pushbutton_encode (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
-
 %mendeklarasikan variabel gambar object
 obj = handles.object;
 %memanggil warna RGB dari gambar
@@ -194,7 +353,7 @@ B = obj(:,:,3);
 %check piksel objek
 [row,col,~] = size(obj)
 %cek karakter pesan yang akan diinputkan
-pesan = get(handles.edit1,'String');
+pesan = get(handles.pesan_encode,'String');
 if isempty(pesan) % cek kondisi pesan di edit text
     msgbox('Please enter your message!','Warning','warn');
     return;
@@ -210,7 +369,7 @@ else
     msgbox('Sorry,your message too long!','Warning','warn');
     return;
 end
-%pemanggilan fungsi encode
+%pemanggilan fungsi pushbutton_encode
 encode_pesan;
 %menampilkan gambar hasil
 axes(handles.stego_image);
@@ -230,72 +389,13 @@ peaksnr = psnr(coverimage,stegoimage);
 % menampilkan PSNR pada edit PSNR
 set(handles.psnr,'String',peaksnr)
 %mengaktifkan tombol save
-set(handles.pushbutton_save,'Enable','on')
+set(handles.save_encode,'Enable','on')
 
-
-% --- Executes on mouse press over axes background.
-function stego_image_CreateFcn(hObject, eventdata, handles)
-% hObject    handle to stego_image (see GCBO)
+% --- Executes on button press in save_encode.
+function save_encode_Callback(hObject, eventdata, handles)
+% hObject    handle to save_encode (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
-
-
-% --- Executes on button press in pushbutton_reset_encode.
-function pushbutton_reset_encode_Callback(hObject, eventdata, handles)
-% hObject    handle to pushbutton_reset_encode (see GCBO)
-% eventdata  reserved - to be defined in a future version of MATLAB
-% handles    structure with handles and user data (see GUIDATA)
-axes(handles.cover_image)
-cla reset
-set(gca,'XTick',[])
-set(gca,'YTick',[])
-% 
-axes(handles.cek_objek)
-cla reset
-set(gca,'XTick',[])
-set(gca,'YTick',[])
-%
-axes(handles.stego_image)
-cla reset
-set(gca,'XTick',[])
-set(gca,'YTick',[])
-%
-set(handles.pushbutton_check_encode,'Enable','off')
-set(handles.pushbutton_encode,'Enable','off')
-set(handles.pushbutton_save,'Enable','off')
-set(handles.edit1,'String',[])
-set(handles.psnr,'String',[])
-
-
-function edit1_Callback(hObject, eventdata, handles)
-% hObject    handle to edit1 (see GCBO)
-% eventdata  reserved - to be defined in a future version of MATLAB
-% handles    structure with handles and user data (see GUIDATA)
-
-% Hints: get(hObject,'String') returns contents of edit1 as text
-%        str2double(get(hObject,'String')) returns contents of edit1 as a double
-
-
-
-% --- Executes during object creation, after setting all properties.
-function edit1_CreateFcn(hObject, eventdata, handles)
-% hObject    handle to edit1 (see GCBO)
-% eventdata  reserved - to be defined in a future version of MATLAB
-% handles    empty - handles not created until after all CreateFcns called
-
-% Hint: edit controls usually have a white background on Windows.
-%       See ISPC and COMPUTER.
-if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
-    set(hObject,'BackgroundColor','white');
-end
-
-
-% --- Executes on button press in pushbutton_save.
-function pushbutton_save_Callback(hObject, eventdata, handles)
-% hObject    handle to pushbutton_save (see GCBO)
-% eventdata  reserved - to be defined in a future version of MATLAB
-% handles    structure with handles and user data (see GUIDATA)
-
 %mendeklarasikan variabel yang telah tersimpan di handles encode
 Img_steg = handles.Img_steg;
 % menampilkan menu save file
@@ -309,129 +409,6 @@ else
     % jika ada file yang dipilih maka akan kembali
     return
 end
-
-
-%---------------------------------------------------------------------------------------------------------------------------------
-
-
-% --- Executes on button press in pushbutton_open_decode.
-function pushbutton_open_decode_Callback(hObject, eventdata, handles)
-% hObject    handle to pushbutton_open_decode (see GCBO)
-% eventdata  reserved - to be defined in a future version of MATLAB
-% handles    structure with handles and user data (see GUIDATA)
-[namefile, namepath] = uigetfile(...
-    {'*.bmp; *.jpg; *.png;', 'FIle of type (*.bmp, *.jpg, *.png)';
-    '*.bmp', 'File Bitmap (*bmp)';...
-    '*.jpg', 'File JPEG (*jpg)';...
-    '*.png', 'File PNG (*png)';...
-    '*.*', 'All type(*.*)'
-    },...
-'Open Image');
-if ~isequal (namefile, 0)
-    axes(handles.cover_stego)
-    cla reset
-    set(gca,'XTick',[])
-    set(gca,'YTick',[])
-    %
-    axes(handles.cek_stego)
-    cla reset
-    set(gca,'XTick',[])
-    set(gca,'YTick',[])
-    set(handles.edit2,'String',[])
-    %membaca file citra stego image
-    handles.data2 = imread(fullfile(namepath, namefile));
-    guidata (hObject, handles);
-    %
-    axes(handles.cover_stego);
-    imshow(handles.data2);
-    title('Cover Stego');
-    set(handles.pushbutton_check_decode,'Enable','on')
-else
-    return;
-end
-
-
-% --- Executes on button press in pushbutton_check_decode.
-function pushbutton_check_decode_Callback(hObject, eventdata, handles)
-% hObject    handle to pushbutton_check_decode (see GCBO)
-% eventdata  reserved - to be defined in a future version of MATLAB
-% handles    structure with handles and user data (see GUIDATA)
-
-%deklarasi variabel data
-check = handles.data2;
-segmentasi;
-%check luas piksel
-X_col = img(:,3);
-Y_row = img(:,4);
-%menampilkan gambar stego
-axes(handles.cek_stego);
-imshow(check);
-%menyimpan variabel pada lokasi handles
-handles.check = check;
-guidata(hObject, handles)
-set(handles.pushbutton_decode,'Enable','on')
-
-
-% --- Executes on button press in pushbutton_decode.
-function pushbutton_decode_Callback(hObject, eventdata, handles)
-% hObject    handle to pushbutton_decode (see GCBO)
-% eventdata  reserved - to be defined in a future version of MATLAB
-% handles    structure with handles and user data (see GUIDATA)
-
-tStart = tic;
-%deklarasi variabel data
-Img_steg = handles.data2;
-%check luas piksel
-[row,col,~] = size(Img_steg)
-%memanggil warna RGB dari gambar
-R = Img_steg(:,:,1);
-G = Img_steg(:,:,2);
-B = Img_steg(:,:,3);
-%pemanggilan fungsi decode
-decode_pesan;
-
-
-% --- Executes on button press in pushbutton_reset_decode.
-function pushbutton_reset_decode_Callback(hObject, eventdata, handles)
-% hObject    handle to pushbutton_reset_decode (see GCBO)
-% eventdata  reserved - to be defined in a future version of MATLAB
-% handles    structure with handles and user data (see GUIDATA)
-axes(handles.cover_stego)
-cla reset
-set(gca,'XTick',[])
-set(gca,'YTick',[])
-%
-axes(handles.cek_stego)
-cla reset
-set(gca,'XTick',[])
-set(gca,'YTick',[])
-%
-set(handles.pushbutton_check_decode,'Enable','off')
-set(handles.pushbutton_decode,'Enable','off')
-set(handles.edit2,'String',[])
-
-
-
-function edit2_Callback(hObject, eventdata, handles)
-% hObject    handle to edit2 (see GCBO)
-% eventdata  reserved - to be defined in a future version of MATLAB
-% handles    structure with handles and user data (see GUIDATA)
-
-% Hints: get(hObject,'String') returns contents of edit2 as text
-%        str2double(get(hObject,'String')) returns contents of edit2 as a double
-
-
-% --- Executes during object creation, after setting all properties.
-function edit2_CreateFcn(hObject, eventdata, handles)
-% hObject    handle to edit2 (see GCBO)
-% eventdata  reserved - to be defined in a future version of MATLAB
-% handles    empty - handles not created until after all CreateFcns called
-% Hint: edit controls usually have a white background on Windows.
-%       See ISPC and COMPUTER.
-if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
-    set(hObject,'BackgroundColor','white');
-end
-
 
 
 function psnr_Callback(hObject, eventdata, handles)
@@ -456,3 +433,113 @@ if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgr
 end
 
 
+% --- Executes on button press in pushbutton_detect_normal.
+function pushbutton_detect_normal_Callback(hObject, eventdata, handles)
+% hObject    handle to pushbutton_detect_normal (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+image = handles.data1;
+normal_detection;
+axes(handles.label_image);
+imshow(bw);
+handles.data2 = bw;
+guidata(hObject,handles);
+%mengaktifkan tombol proses
+set(handles.pushbutton_process,'Enable','on')
+
+% --- Executes on button press in pushbutton_process.
+function pushbutton_process_Callback(hObject, eventdata, handles)
+% hObject    handle to pushbutton_process (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+cover = handles.data1;
+bw = handles.data2;
+process;
+set(handles.newcover,'Enable','on')
+
+
+function th_Callback(hObject, eventdata, handles)
+% hObject    handle to th (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+% Hints: get(hObject,'String') returns contents of th as text
+%        str2double(get(hObject,'String')) returns contents of th as a double
+
+
+% --- Executes during object creation, after setting all properties.
+function th_CreateFcn(hObject, eventdata, handles)
+% hObject    handle to th (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    empty - handles not created until after all CreateFcns called
+
+% Hint: edit controls usually have a white background on Windows.
+%       See ISPC and COMPUTER.
+if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
+    set(hObject,'BackgroundColor','white');
+end
+
+
+% --- Executes on button press in newcover.
+function newcover_Callback(hObject, eventdata, handles)
+% hObject    handle to newcover (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+cover = handles.data1;
+bw = handles.data2;
+process;
+%cek karakter pesan yang akan diinputkan
+nlabel = get(handles.nlabel,'String');
+if isempty(nlabel) % cek kondisi pesan di edit text
+    msgbox('Please enter n!','Warning','warn');
+    return;
+end
+if str2num(nlabel) <= N
+    row = prop(str2num(nlabel)).BoundingBox(4) %banyaknya baris piksel
+    col = prop(str2num(nlabel)).BoundingBox(3) %banyaknya kolom piksel
+    img = prop(str2num(nlabel)).BoundingBox;
+    axes(handles.new_cover_image);
+    object = imcrop(cover,img);
+else
+    msgbox('Sorry, n too much!','Warning','warn');
+    return;
+end
+imshow(object);
+title('New Cover Image');
+%menyimpan variabel pada lokasi handles
+handles.object = object;
+guidata(hObject, handles)
+%mengaktifkan tombol pushbutton_encode
+set(handles.pushbutton_encode,'Enable','on')
+% menampilkan menu save file
+[nama_file, nama_path] = uiputfile('Cover Image.bmp');
+% jika ada file yang dipilih maka akan mengeksekusi perintah di bawahnya
+if ~isequal(nama_file,0)
+    % menyimpan citra hasil steganografi
+    imwrite(object,fullfile(nama_path,nama_file))
+    msgbox('Picture has been saved!');
+else
+    % jika ada file yang dipilih maka akan kembali
+    return
+end
+
+function nlabel_Callback(hObject, eventdata, handles)
+% hObject    handle to nlabel (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+% Hints: get(hObject,'String') returns contents of nlabel as text
+%        str2double(get(hObject,'String')) returns contents of nlabel as a double
+
+
+% --- Executes during object creation, after setting all properties.
+function nlabel_CreateFcn(hObject, eventdata, handles)
+% hObject    handle to nlabel (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    empty - handles not created until after all CreateFcns called
+
+% Hint: edit controls usually have a white background on Windows.
+%       See ISPC and COMPUTER.
+if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
+    set(hObject,'BackgroundColor','white');
+end

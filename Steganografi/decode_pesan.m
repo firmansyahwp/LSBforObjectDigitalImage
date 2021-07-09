@@ -20,7 +20,7 @@ panjang_pesan = strcat(pesan_r, pesan_g, pesan_b, pesan_r2, pesan_g2, pesan_b2);
 panjang_pesan = bin2dec(reshape(panjang_pesan,12,[]).');
 % ekstraksi pesan
 pesan = '';
-for i = 1:baris_max-1
+for i = 1:baris_max
     for j = 1:kolom_max
         % untuk piksel merah
         panjang_biner = length(pesan);
@@ -30,7 +30,7 @@ for i = 1:baris_max-1
             pesan = strcat(pesan,pesan_r);
         else
             pesan_asli = char(bin2dec(reshape(pesan,8,[]).')).';
-            set(handles.edit2,'String',pesan_asli);
+            set(handles.pesan_decode,'String',pesan_asli);
             return;
         end         
         % untuk piksel hijau
@@ -41,7 +41,7 @@ for i = 1:baris_max-1
             pesan = strcat(pesan,pesan_g);
         else
             pesan_asli = char(bin2dec(reshape(pesan,8,[]).')).';
-            set(handles.edit2,'String',pesan_asli);
+            set(handles.pesan_decode,'String',pesan_asli);
             return;
         end         
         % untuk piksel biru
@@ -52,7 +52,7 @@ for i = 1:baris_max-1
             pesan = strcat(pesan,pesan_b);
         else
             pesan_asli = char(bin2dec(reshape(pesan,8,[]).')).';
-            set(handles.edit2,'String',pesan_asli);
+            set(handles.pesan_decode,'String',pesan_asli);
             return;
         end
     end

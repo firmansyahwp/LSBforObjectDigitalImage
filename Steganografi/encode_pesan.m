@@ -24,7 +24,7 @@ G(baris_max,2) = bin2dec(image_pesan_g2);
 B(baris_max,2) = bin2dec(image_pesan_b2);
 % LSB
 panjang_pesan = panjang_pesan*8;
-for i = 1:baris_max-1
+for i = 1:baris_max
     for j = 1:kolom_max
         % untuk piksel merah
         if panjang_pesan ~= 0
