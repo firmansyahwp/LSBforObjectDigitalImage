@@ -359,7 +359,7 @@ if isempty(pesan) % cek kondisi pesan di edit text
     return;
 end
 % penentuan maksimal karakter pesan dengan maksimal 1 penyisipan / piksel
-karakter_max = (row-1)*(col);
+karakter_max = (row)*(col);
 karakter_max = round((karakter_max*3)/8); % per channel warna
 % perhitungan panjang pesan di edit text
 panjang_pesan = length(pesan); % masih dalam hitungan desimal
