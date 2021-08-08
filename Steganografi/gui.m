@@ -22,7 +22,7 @@ function varargout = gui(varargin)
 
 % Edit the above text to modify the response to help gui
 
-% Last Modified by GUIDE v2.5 23-Jun-2021 03:38:00
+% Last Modified by GUIDE v2.5 08-Aug-2021 15:47:12
 
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
@@ -91,6 +91,10 @@ set(handles.pesan_decode,'String',[])
 % Update handles structure
 guidata(hObject, handles);
 movegui(hObject,'center');
+%axes background
+ax = axes('unit', 'normalized', 'position', [0 0 1 1]);
+bg = imread('bg.png');
+imagesc(bg);
 
 % UIWAIT makes gui wait for user response (see UIRESUME)
 % uiwait(handles.figure1);
@@ -543,3 +547,46 @@ function nlabel_CreateFcn(hObject, eventdata, handles)
 if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
     set(hObject,'BackgroundColor','white');
 end
+
+
+% --- Executes during object deletion, before destroying properties.
+function cover_image_CreateFcn(hObject, eventdata, handles)
+% hObject    handle to cover_image (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+
+% --- Executes during object creation, after setting all properties.
+function label_image_CreateFcn(hObject, eventdata, handles)
+% hObject    handle to label_image (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    empty - handles not created until after all CreateFcns called
+
+% Hint: place code in OpeningFcn to populate label_image
+
+
+% --- Executes during object creation, after setting all properties.
+function stego_image_CreateFcn(hObject, eventdata, handles)
+% hObject    handle to stego_image (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    empty - handles not created until after all CreateFcns called
+
+% Hint: place code in OpeningFcn to populate stego_image
+
+
+% --- Executes during object creation, after setting all properties.
+function image_stego_CreateFcn(hObject, eventdata, handles)
+% hObject    handle to image_stego (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    empty - handles not created until after all CreateFcns called
+
+% Hint: place code in OpeningFcn to populate image_stego
+
+
+% --- Executes during object creation, after setting all properties.
+function new_cover_image_CreateFcn(hObject, eventdata, handles)
+% hObject    handle to new_cover_image (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    empty - handles not created until after all CreateFcns called
+
+% Hint: place code in OpeningFcn to populate new_cover_image
