@@ -55,6 +55,23 @@ function gui_OpeningFcn(hObject, eventdata, handles, varargin)
 % Choose default command line output for gui
 handles.output = hObject;
 
+% Update handles structure
+guidata(hObject, handles);
+
+movegui(hObject,'center');
+
+%axes background
+ax = axes('unit', 'normalized', 'position', [0 0 1 1]);
+%splash
+s = SplashScreen( 'gui', 'splash.png', ...
+    'ProgressBar', 'on', ...
+    'ProgressPosition', 5, ...
+    'ProgressRatio', 0.8);
+pause(2)
+delete( s )
+bg = imread('bg.png');
+imagesc(bg);
+
 %encoding
 axes(handles.cover_image)
 cla reset
@@ -88,13 +105,7 @@ set(gca,'YTick',[])
 set(handles.pushbutton_decode,'Enable','off')
 set(handles.pesan_decode,'String',[])
 
-% Update handles structure
-guidata(hObject, handles);
-movegui(hObject,'center');
-%axes background
-ax = axes('unit', 'normalized', 'position', [0 0 1 1]);
-bg = imread('bg.png');
-imagesc(bg);
+
 
 % UIWAIT makes gui wait for user response (see UIRESUME)
 % uiwait(handles.figure1);
