@@ -97,9 +97,6 @@ set(handles.pushbutton_encode,'Enable','off')
 set(handles.save_encode,'Enable','off')
 set(handles.pesan_encode,'String',[])
 set(handles.nlabel,'String',[])
-set(handles.psnr,'String',[])
-set(handles.th,'String',[])
-set(handles.bataskarakter,'String',[])
 %decoding
 axes(handles.image_stego)
 cla reset
@@ -140,7 +137,6 @@ function pushbutton_open_encode_Callback(hObject, eventdata, handles)
 % hObject    handle to pushbutton_open_encode (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
-
 [namefile, namepath] = uigetfile(...
     {'*.bmp; *.tiff; *.png;', 'FIle of type (*.bmp, *.tiff, *.png)';
     '*.bmp', 'File Bitmap (*bmp)';...
@@ -174,7 +170,6 @@ if ~isequal (namefile, 0)
     handles.data1 = imread(fullfile(namepath, namefile));
     guidata (hObject, handles);
     %
-    reset_encode;
     axes(handles.cover_image);
     imshow(handles.data1);
     title('Cover Image');
@@ -227,19 +222,6 @@ function pesan_encode_Callback(hObject, eventdata, handles)
 % hObject    handle to pesan_encode (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
-pesan = get(hObject,'String');
-panjang_pesan = length(pesan); % masih dalam hitungan desimal (per karakter) dalam array
-max_byte = get(handles.bataskarakter,'String');
-max = str2double(max_byte);
-
-karakter = max-panjang_pesan;
-
-if karakter > 0 
-    set(handles.bataskarakter,'String',karakter)
-else
-    msgbox('Sorry,your message too long!','Warning','warn');
-    return
-end
 
 % Hints: get(hObject,'String') returns contents of pesan_encode as text
 %        str2double(get(hObject,'String')) returns contents of pesan_encode as a double
@@ -263,7 +245,7 @@ function pushbutton_open_decode_Callback(hObject, eventdata, handles)
 % hObject    handle to pushbutton_open_decode (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
-
+reset_decode;
 [namefile, namepath] = uigetfile(...
     {'*.bmp; *.tiff; *.png;', 'FIle of type (*.bmp, *.tiff, *.png)';
     '*.bmp', 'File Bitmap (*bmp)';...
@@ -283,7 +265,6 @@ if ~isequal (namefile, 0)
     handles.data1 = imread(fullfile(namepath, namefile));
     guidata (hObject, handles);
     %
-    reset_decode;
     axes(handles.image_stego);
     imshow(handles.data1);
     title('Cover Stego');  
@@ -545,7 +526,7 @@ else
 end
 % penentuan maksimal karakter pesan dengan maksimal 1 penyisipan / piksel
 max_byte = (row)*(col);
-max_byte = round(((max_byte*3)/8)-50); % dalam byte dengan tolenransi 1000 karakter
+max_byte = round(((max_byte*3)/8)-1000) % dalam byte dengan tolenransi 1000 karakter
 set(handles.bataskarakter,'String',max_byte)
 imshow(object);
 title('New Cover Image');
